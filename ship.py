@@ -1,9 +1,11 @@
 import pygame.image
+from pygame.sprite import Sprite
 
 
-class Ship:
+class Ship(Sprite):
     def __init__(self, game):
         """Initialization of the ship and setting its starting coordinates"""
+        super().__init__()
         self.screen = game.screen
         self.settings = game.settings
         self.screen_rect = game.screen.get_rect()
