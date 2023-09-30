@@ -8,6 +8,7 @@ from time import sleep
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from ultimate import Ultimate
 
 
 class AlienInvasion:
@@ -26,6 +27,7 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.ultimates = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.stats = GameStats(self)
         self.scoreboard = Scoreboard(self)
@@ -44,6 +46,7 @@ class AlienInvasion:
             if self.game_active:
                 self.ship.update()
                 self._update_bullets()
+                self._update_ultimates()
                 self._update_aliens()
 
             self._update_screen()
@@ -85,6 +88,9 @@ class AlienInvasion:
         # User start the game by pressing the 'P' key
         elif event.key == pygame.K_p:
             self.game_active = True
+        # User pressed the ultimate ability
+        elif event.key == pygame.K_u and self.settings.ultimate_allowed:
+            self._fire_ultimate()
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
@@ -122,11 +128,22 @@ class AlienInvasion:
             new = Bullet(self)
             self.bullets.add(new)
 
+    def _fire_ultimate(self):
+        new = Ultimate(self)
+        self.ultimates.add(new)
+        self.settings.ultimate_allowed = False
+        self.stats.ultimate_score = 0
+
     def _update_screen(self):
         """Redraw the screen during each pass through the loop"""
-        self.screen.fill(self.settings.bg_color)
+        # self.screen.fill(self.settings.bg_color)
+        self.screen.blit(self.settings.background_image, (0, 0))
+
         for b in self.bullets.sprites():
             b.draw_bullet()
+
+        for u in self.ultimates.sprites():
+            u.draw_ultimate()
 
         # Draw the ship
         self.ship.blitme()
@@ -138,6 +155,10 @@ class AlienInvasion:
 
         # Draw the scoreboard
         self.scoreboard.display_score()
+
+        # Check if the ultimate ability is ready
+        if self.stats.ultimate_score > 1000:
+            self.settings.ultimate_allowed = True
 
         # Make the most recently drawn screen visible
         pygame.display.flip()
@@ -152,6 +173,17 @@ class AlienInvasion:
 
         self._check_bullet_alien_collisions()
 
+    def _update_ultimates(self):
+        self.ultimates.update()
+
+        # Get rid of the bullets that have disappeared
+        for u in self.ultimates.copy():
+            if u.rect.bottom <= 0:
+                self.ultimates.remove(u)
+
+        # Have to make a version for ultimate ability
+        self._check_ultimate_alien_collisions()
+
     def _check_bullet_alien_collisions(self):
         # Check if any bullets have hit aliens, if they have get rid of them
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
@@ -159,12 +191,34 @@ class AlienInvasion:
         if collisions:
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points_worth * len(aliens)
+                self.stats.ultimate_score += self.settings.alien_points_worth * len(aliens)
             self.scoreboard.prepare_score()
             self.scoreboard.prepare_high_score()
 
         if not self.aliens:
             # Destroy the existing bullets and create a new fleet
             self.bullets.empty()
+            self._create_fleet()
+            self.settings.increase_speed()
+
+            # Increase the level
+            self.stats.level += 1
+            self.scoreboard.prepare_level()
+
+    def _check_ultimate_alien_collisions(self):
+        # Check if any ultimates have hit aliens, if they have get rid of them
+        collisions = pygame.sprite.groupcollide(self.ultimates, self.aliens, False, True)
+
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points_worth * len(aliens)
+                self.stats.ultimate_score += self.settings.alien_points_worth * len(aliens)
+            self.scoreboard.prepare_score()
+            self.scoreboard.prepare_high_score()
+
+        if not self.aliens:
+            # Destroy the existing bullets and create a new fleet
+            self.ultimates.empty()
             self._create_fleet()
             self.settings.increase_speed()
 

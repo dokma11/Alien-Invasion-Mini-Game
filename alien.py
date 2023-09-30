@@ -9,7 +9,8 @@ class Alien(Sprite):
         self.settings = game.settings
 
         # Load the alien image and set its rect attribute
-        self.image = pygame.image.load('images/enemy.bmp')
+        self.image = pygame.image.load('images/spaceship2.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (32, 32))
         self.rect = self.image.get_rect()
 
         # Set aliens starting position (top of the screen)
