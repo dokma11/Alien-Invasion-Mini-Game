@@ -14,23 +14,19 @@ class Settings:
         self.bg_color = (230, 230, 230)
 
         original_bg_image = pygame.image.load('images/background5(purple, pink - huge).bmp')
+        original_bg_image_2 = pygame.image.load('images/background1(blue).bmp')
+        original_bg_image_3 = pygame.image.load('images/background4(black-huge).bmp')
 
         # Resize the background image to fit the screen
-        self.background_image = pygame.transform.scale(original_bg_image, (self.screen_width, self.screen_height))
+        self.background_image_1 = pygame.transform.scale(original_bg_image, (self.screen_width, self.screen_height))
+        self.background_image_2 = pygame.transform.scale(original_bg_image_2, (self.screen_width, self.screen_height))
+        self.background_image_3 = pygame.transform.scale(original_bg_image_3, (self.screen_width, self.screen_height))
 
         # Ship settings
         self.ship_limit = 3
 
         # Bullet settings
-        self.bullet_width = 3
-        self.bullet_height = 15
-        self.bullet_color = (255, 255, 255)
         self.bullets_allowed = 10
-
-        # Ultimate ability settings
-        self.ultimate_width = 140
-        self.ultimate_height = 20
-        self.ultimate_color = (255, 255, 255)
 
         # Alien settings
         self.fleet_vertical_speed = 6

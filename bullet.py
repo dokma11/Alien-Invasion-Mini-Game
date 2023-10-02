@@ -8,10 +8,11 @@ class Bullet(Sp):
         super().__init__()
         self.screen = game.screen
         self.settings = game.settings
-        self.color = self.settings.bullet_color
+        self.image = pygame.image.load('images/bullet.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (8, 18))
+        self.rect = self.image.get_rect()
 
         # Setting bullets position
-        self.rect = pygame.Rect(0, 0, self.settings.bullet_width, self.settings.bullet_height)
         self.rect.midtop = game.ship.rect.midtop
 
         # Store its position as a float
@@ -24,4 +25,4 @@ class Bullet(Sp):
         self.rect.y = self.y
 
     def draw_bullet(self):
-        pygame.draw.rect(self.screen, self.color, self.rect)
+       self.screen.blit(self.image, self.rect)

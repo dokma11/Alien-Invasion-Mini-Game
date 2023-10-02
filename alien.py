@@ -9,9 +9,26 @@ class Alien(Sprite):
         self.settings = game.settings
 
         # Load the alien image and set its rect attribute
-        self.image = pygame.image.load('images/spaceship2.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (32, 32))
-        self.rect = self.image.get_rect()
+        if game.stats.level == 1 or game.stats.level == 6 or game.stats.level == 11:
+            self.image = pygame.image.load('images/alien-green.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            self.rect = self.image.get_rect()
+        elif game.stats.level == 2 or game.stats.level == 7 or game.stats.level == 12:
+            self.image = pygame.image.load('images/alien-purple.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            self.rect = self.image.get_rect()
+        elif game.stats.level == 3 or game.stats.level == 8 or game.stats.level == 13:
+            self.image = pygame.image.load('images/alien-pink.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            self.rect = self.image.get_rect()
+        elif game.stats.level == 4 or game.stats.level == 9 or game.stats.level == 14:
+            self.image = pygame.image.load('images/alien-dark-blue.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            self.rect = self.image.get_rect()
+        else:
+            self.image = pygame.image.load('images/alien-red.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (32, 32))
+            self.rect = self.image.get_rect()
 
         # Set aliens starting position (top of the screen)
         self.rect.x = self.rect.width

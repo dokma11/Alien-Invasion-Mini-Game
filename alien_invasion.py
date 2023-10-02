@@ -88,6 +88,8 @@ class AlienInvasion:
         # User start the game by pressing the 'P' key
         elif event.key == pygame.K_p:
             self.game_active = True
+            # Hide the cursor
+            pygame.mouse.set_visible(False)
         # User pressed the ultimate ability
         elif event.key == pygame.K_u and self.settings.ultimate_allowed:
             self._fire_ultimate()
@@ -136,8 +138,12 @@ class AlienInvasion:
 
     def _update_screen(self):
         """Redraw the screen during each pass through the loop"""
-        # self.screen.fill(self.settings.bg_color)
-        self.screen.blit(self.settings.background_image, (0, 0))
+        if self.stats.level <= 5:
+            self.screen.blit(self.settings.background_image_1, (0, 0))
+        elif 5 < self.stats.level <= 10:
+            self.screen.blit(self.settings.background_image_2, (0, 0))
+        elif 6 < self.stats.level <= 15:
+            self.screen.blit(self.settings.background_image_3, (0, 0))
 
         for b in self.bullets.sprites():
             b.draw_bullet()
@@ -157,7 +163,7 @@ class AlienInvasion:
         self.scoreboard.display_score()
 
         # Check if the ultimate ability is ready
-        if self.stats.ultimate_score > 1000:
+        if self.stats.ultimate_score > 3:
             self.settings.ultimate_allowed = True
 
         # Make the most recently drawn screen visible
@@ -243,6 +249,7 @@ class AlienInvasion:
 
             # Get rid of any remaining bullets and aliens
             self.bullets.empty()
+            self.ultimates.empty()
             self.aliens.empty()
 
             # Create a new fleet and center the ship
@@ -250,14 +257,31 @@ class AlienInvasion:
             self.ship.center_ship()
 
             # Pause
-            sleep(0.5)
+            sleep(1.5)
         else:
+            # Display the Game Over sign
+            game_over_font = pygame.font.Font('images/pixel_font.ttf', 60)
+            game_over_image = game_over_font.render("GAME OVER", True, (249, 25, 25))
+            game_over_image_rect = pygame.Rect(0, 0, game_over_image.get_width(), game_over_image.get_height())
+            game_over_image_rect.center = self.screen.get_rect().center
+
+            # Get rid of any remaining bullets and aliens
+            self.bullets.empty()
+            self.ultimates.empty()
+            self.aliens.empty()
+
+            self.screen.blit(game_over_image, game_over_image_rect)
+            pygame.display.flip()
+
+            sleep(5)
+
             self.game_active = False
             pygame.mouse.set_visible(True)
 
     def _create_fleet(self):
         # Create an alien
         alien = Alien(self)
+
         alien_width, alien_height = alien.rect.size
 
         current_x, current_y = alien_width, alien_height

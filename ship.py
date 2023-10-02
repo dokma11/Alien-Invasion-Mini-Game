@@ -11,7 +11,8 @@ class Ship(Sprite):
         self.screen_rect = game.screen.get_rect()
 
         # Loading the ships image
-        self.image = pygame.image.load('images/DurrrSpaceShip.bmp')
+        self.image = pygame.image.load('images/spaceship-gray.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.rect = self.image.get_rect()
 
         # Start each new ship at the bottom center of the screen
